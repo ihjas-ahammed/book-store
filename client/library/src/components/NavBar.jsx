@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import {AppBar,Box,Toolbar,IconButton,Typography, Menu, MenuItem, Container, Avatar,Tooltip,InputBase } from '@mui/material';
+import { AppBar, Box, Toolbar, IconButton, Typography, Menu, MenuItem, Container, Avatar, Tooltip, InputBase, Button } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
-import { Menu as MenuIcon,Search as SearchIcon, Bookmarks as LibraryIcon } from '@mui/icons-material';
+import { Menu as MenuIcon, Search as SearchIcon, Bookmarks as LibraryIcon } from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -39,6 +40,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function NavBar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const navigate = useNavigate()
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -57,7 +59,6 @@ export default function NavBar() {
             variant="h6"
             noWrap
             sx={{
-              mr: 2,
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.3rem',
@@ -66,15 +67,23 @@ export default function NavBar() {
           >
             LIBRARY
           </Typography>
-          <Search sx={{ml:"auto",mr:3}}>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </Search>
+          <Box className="mr-auto ml-5"> 
+            <Link to="/">
+              <Button color="inherit">Home</Button>
+            </Link>
+            <Link to="/products">
+              <Button color="inherit">Products</Button>
+            </Link>
+          </Box>
+          <Search sx={{ mr: 3 }}>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search…"
+              inputProps={{ 'aria-label': 'search' }}
+            />
+          </Search>
           <Box>
             <Tooltip title="Open user menu">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -96,7 +105,7 @@ export default function NavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem onClick={handleCloseUserMenu}>
+              <MenuItem onClick={()=>{navigate("/sign-in");handleCloseUserMenu()}}>
                 Sign In
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>

@@ -1,11 +1,8 @@
+import { Stack, Box, Typography } from '@mui/material'
 import React from 'react'
-import Banner from './components/Banner'
-import { Box, Stack, Typography } from '@mui/material'
-import BookCard from './components/BookCard'
-import { useNavigate } from 'react-router'
+import BookCard from '../components/BookCard'
 
 const data = [
-    
     {
         name: "Recent Price Drops",
         items: [
@@ -88,37 +85,44 @@ const data = [
     }
 ]
 
-const Home = () => {
+
+const Products = () => {
     return (
         <Stack>
-            <Banner />
+
             <Box className="my-10 w-[100%] px-10">
-                {data.map((i, index) => {
-                    return (
-                        <Stack key={index} className='items-center'>
+                <Stack className='items-center'>
+                    <Typography variant='h4' className=' text-xl font-medium text-gray-900 tracking-tight'>All Books</Typography>
 
-                            <Typography variant='h4' className='text-xl font-medium text-gray-900 tracking-tight'>{i.name}</Typography>
-                            <Box className="my-3 flex flex-wrap w-fit items-center justify-center">
 
-                                {i.items.map((j, int) => {
-                                    return (
-                                        <BookCard
-                                            key={int}
-                                            image={j.image}
-                                            name={j.name}
-                                            rating={j.rating}
-                                            price={j.price}
-                                            priceOld={j.priceOld}
-                                        />
-                                    )
-                                })}
-                            </Box>
-                        </Stack>
-                    )
-                })}
+                    <Box className="my-3 flex flex-wrap w-fit items-center justify-center">
+
+                        {data.map((i, index) => {
+                            return (
+                                <>
+                                    {
+                                        i.items.map((j, int) => {
+                                            return (
+                                                <BookCard
+                                                    key={int}
+                                                    image={j.image}
+                                                    name={j.name}
+                                                    rating={j.rating}
+                                                    price={j.price}
+                                                    priceOld={j.priceOld}
+                                                />
+                                            )
+                                        })
+                                    }
+                                </>
+                            )
+                        })}
+
+                    </Box>
+                </Stack>
             </Box>
         </Stack>
     )
 }
 
-export default Home
+export default Products
