@@ -8,6 +8,7 @@ import Home from './Home'
 import Products from './pages/Products'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
+import MyAccount from './pages/MyAccount'
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/products" element={<Products/>}/>
           <Route path="/sign-in" element={<SignIn/>}/>
           <Route path="/sign-up" element={<SignUp/>}/>
+          <Route path='/my-account' element={<MyAccount/>}/>
         </Routes>
       </div>
     </div>
