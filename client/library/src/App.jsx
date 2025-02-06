@@ -10,6 +10,9 @@ import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import MyAccount from './pages/MyAccount'
 import ProductInfo from './pages/ProductInfo'
+import MyCart from './pages/MyCart'
+import SearchResults from './pages/SearchResults'
+import Orders from './pages/Orders'
 
 
 function App() {
@@ -24,6 +27,9 @@ function App() {
           <Route path="/sign-up" element={<SignUp/>}/>
           <Route path='/my-account' element={<MyAccount/>}/>
           <Route path='/product' element={<ProductInfo/>} />
+          <Route path='/my-cart' element={<MyCart/>}/>
+          <Route path='/search' element={<SearchResults/>}/>
+          <Route path='/orders' element={<Orders/>}/>
         </Routes>
       </div>
     </div>

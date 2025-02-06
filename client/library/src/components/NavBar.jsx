@@ -41,8 +41,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function NavBar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate()
+  const [inputValue, setInputValue] = useState('');
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      navigate('/search',{state:{value:inputValue}})
+    }
+  };
 
-  const [userData,setUserData] = useState({
+  const [userData, setUserData] = useState({
     name: 'Ihjas',
     email: 'ihjaskallingal@gmail.com',
     password: 'Ihjas@1062'
@@ -73,7 +79,7 @@ export default function NavBar() {
           >
             LIBRARY
           </Typography>
-          <Box className="mr-auto ml-5"> 
+          <Box className="mr-auto ml-5">
             <Link to="/">
               <Button color="inherit">Home</Button>
             </Link>
@@ -88,6 +94,9 @@ export default function NavBar() {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
           </Search>
           <Box>
@@ -112,9 +121,9 @@ export default function NavBar() {
               onClose={handleCloseUserMenu}
             >
               {
-                userData != null ? <MenuItem onClick={()=> { navigate("/my-account",{state:{data:userData}});handleCloseUserMenu()}}>My Account</MenuItem> : <MenuItem onClick={()=>{navigate("/sign-in");handleCloseUserMenu()}}>Sign In</MenuItem>
+                userData != null ? <MenuItem onClick={() => { navigate("/my-account", { state: { data: userData } }); handleCloseUserMenu() }}>My Account</MenuItem> : <MenuItem onClick={() => { navigate("/sign-in"); handleCloseUserMenu() }}>Sign In</MenuItem>
               }
-              <MenuItem onClick={handleCloseUserMenu}>
+              <MenuItem onClick={() => { navigate("/my-cart"); handleCloseUserMenu(); }}>
                 My Cart
               </MenuItem>
             </Menu>
