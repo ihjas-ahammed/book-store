@@ -13,6 +13,7 @@ import ProductInfo from './pages/ProductInfo'
 import MyCart from './pages/MyCart'
 import SearchResults from './pages/SearchResults'
 import Orders from './pages/Orders'
+import Footer from './components/Footer'
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path='/search' element={<SearchResults/>}/>
           <Route path='/orders' element={<Orders/>}/>
         </Routes>
+        <Footer/>
       </div>
     </div>
   )

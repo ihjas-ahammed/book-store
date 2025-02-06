@@ -44,7 +44,7 @@ export default function NavBar() {
   const [inputValue, setInputValue] = useState('');
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      navigate('/search',{state:{value:inputValue}})
+      navigate('/search', { state: { value: inputValue } })
     }
   };
 
@@ -121,7 +121,12 @@ export default function NavBar() {
               onClose={handleCloseUserMenu}
             >
               {
-                userData != null ? <MenuItem onClick={() => { navigate("/my-account", { state: { data: userData } }); handleCloseUserMenu() }}>My Account</MenuItem> : <MenuItem onClick={() => { navigate("/sign-in"); handleCloseUserMenu() }}>Sign In</MenuItem>
+                userData != null ? (<>
+                  <MenuItem onClick={() => { navigate("/my-account", { state: { data: userData } }); handleCloseUserMenu() }}>My Account</MenuItem>
+                  <MenuItem onClick={() => { navigate("/orders"); handleCloseUserMenu(); }}>
+                    Orders
+                  </MenuItem></>
+                ) : <MenuItem onClick={() => { navigate("/sign-in"); handleCloseUserMenu() }}>Sign In</MenuItem>
               }
               <MenuItem onClick={() => { navigate("/my-cart"); handleCloseUserMenu(); }}>
                 My Cart
