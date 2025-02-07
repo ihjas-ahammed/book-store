@@ -2,50 +2,60 @@ import { Card, Paper, Stack, Typography, Box, Button, ButtonBase, TableCell, Tab
 
 import React, { useState } from 'react'
 import CartItem from '../components/CartItem'
+import Cookies from 'js-cookie'
+import { useEffect } from 'react'
+import axios from 'axios'
 
 const MyCart = () => {
 
-    const [cartItems, setCartItems] = useState([
-        {
-            item: {
-                id: 1,
-                image: "https://books.google.com/books/publisher/content/images/frontcover/v44WEQAAQBAJ?fife=w256-h256",
-                name: "Trading Psychology Mastery With Ease: A step by step guide to achieve mastery",
-                rating: "4.1",
-                price: "9.00",
-                priceOld: "99.00",
-                description: "In 'Trading Psychology Mastery With Ease,' Vikash Kumar offers practical insights and effective techniques to help traders develop a resilient and disciplined mindset, manage emotions, and achieve lasting success in the financial markets.",
-                author: "Vikash Kumar"
-            },
-            count: 1
-        },
-        {
-            item: {
-                "id": 2,
-                "image": "https://books.google.com/books/publisher/content/images/frontcover/2Pe-EAAAQBAJ?fife=w256-h256",
-                "name": "The List of Suspicious Things: The No.1 Sunday Times Bestseller",
-                "rating": "4.9",
-                "price": "385.86",
-                "priceOld": "578.79",
-                "description": "Set in 1979 Yorkshire, 'The List of Suspicious Things' follows 12-year-old Miv and her best friend Sharon as they compile a list of suspicious activities in their neighborhood, aiming to catch the Yorkshire Ripper. Their investigation uncovers deeper truths closer to home.",
-                "author": "Jennie Godfrey"
-            },
-            count: 2
-        }
-    ])
+    const [cartItems, setCartItems] = useState([])
 
-    const handleChangeCount = (index, newCount) => {
-        if(newCount < 0) return
-        setCartItems((prevCartItems) =>
-          prevCartItems.map((cartItem, i) =>
-            i === index ? { ...cartItem, count: newCount } : cartItem
-          )
-        );
+    
+    const user = Cookies.get("User")
+    const User = user != null ? JSON.parse(user) : null
+    if (User == null) navigate('/sign-in')
+    const username = User.username
+        
+    useEffect(() => {
+        axios
+          .get(`http://localhost:3001/cart/${username}`)
+          .then((res) => {
+            setCartItems(res.data.cartItems);
+          })
+          .catch((error) => {
+            console.error('Error fetching cart:', error);
+          });
+      }, []);
+
+
+      const removeCartItem = (itemName) => {
+        axios
+          .delete(`http://localhost:3001/cart/remove`, {
+            data: { username, itemName },
+          })
+          .then((res) => {
+            setCartItems(res.data.cartItems);
+          })
+          .catch((error) => {
+            console.error('Error removing cart item:', error);
+          });
+      };
+    
+      const updateCount = (itemName, newCount) => {
+        if (newCount < 0) return
+        axios
+          .put(`http://localhost:3001/cart/update`, { username, itemName, newCount })
+          .then((res) => {
+            setCartItems(res.data.cartItems);
+          })
+          .catch((error) => {
+            console.error('Error updating cart item count:', error);
+          });
       };
 
     const getCartTotal = () => {
         let t = 0
-        cartItems.map((i) => t += i.item.price*i.count)
+        cartItems.map((i) => t += i.item.price * i.count)
         return t
     }
 
@@ -66,17 +76,20 @@ const MyCart = () => {
                     </Box>
                     <Stack className='pt-2 gap-2 max-h-200 overflow-y-scroll no-scrollbar'>
                         {
-                            cartItems.map((i,index) => {
+                            cartItems.map((i, index) => {
                                 return (
                                     <CartItem
+                                        kay={index}
                                         image={i.item.image}
                                         name={i.item.name}
                                         author={i.item.author}
                                         price={i.item.price}
                                         count={i.count}
-                                        onChangeCount={(a,e)=>{
-                                            handleChangeCount(index,i.count+a)
-
+                                        onChangeCount={(a, e) => {
+                                            updateCount(i.item.name, i.count + a)
+                                        }}
+                                        onDelete = {(e)=>{
+                                            removeCartItem(i.item.name)
                                         }}
                                     />
                                 )
@@ -98,11 +111,11 @@ const MyCart = () => {
                             </TableRow>
                             <TableRow>
                                 <TableCell>GST</TableCell>
-                                <TableCell>₹ {parseInt(getCartTotal()*0.18)}</TableCell>
+                                <TableCell>₹ {parseInt(getCartTotal() * 0.18)}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell>Total</TableCell>
-                                <TableCell>₹ {parseInt(getCartTotal())+parseInt(getCartTotal()*0.18)}</TableCell>
+                                <TableCell>₹ {parseInt(getCartTotal()) + parseInt(getCartTotal() * 0.18)}</TableCell>
                             </TableRow>
                         </Table>
                         <Button sx={{ mt: 'auto' }} className='w-[100%]'>Check Out</Button>

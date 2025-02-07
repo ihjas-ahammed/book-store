@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppBar, Box, Toolbar, IconButton, Typography, Menu, MenuItem, Container, Avatar, Tooltip, InputBase, Button } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import { Menu as MenuIcon, Search as SearchIcon, Bookmarks as LibraryIcon, Password } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
+import Cookies from 'js-cookie'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -42,17 +43,14 @@ export default function NavBar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate()
   const [inputValue, setInputValue] = useState('');
+  const location = useLocation()
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       navigate('/search', { state: { value: inputValue } })
     }
   };
 
-  const [userData, setUserData] = useState({
-    name: 'Ihjas',
-    email: 'ihjaskallingal@gmail.com',
-    password: 'Ihjas@1062'
-  })
+  const [userData, setUserData] = useState(null)
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -61,6 +59,21 @@ export default function NavBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+
+  useEffect(()=>{
+    try{
+      
+      const user =  Cookies.get('User') 
+      if(user != null || user != ''){
+        setUserData(JSON.parse(user))
+      }
+
+      
+    }catch(e){
+      console.log(e)
+    }
+  },[])
 
   return (
     <AppBar position="static">
@@ -123,14 +136,15 @@ export default function NavBar() {
               {
                 userData != null ? (<>
                   <MenuItem onClick={() => { navigate("/my-account", { state: { data: userData } }); handleCloseUserMenu() }}>My Account</MenuItem>
+
+                  <MenuItem onClick={() => { navigate("/my-cart"); handleCloseUserMenu(); }}>
+                    My Cart
+                  </MenuItem>
                   <MenuItem onClick={() => { navigate("/orders"); handleCloseUserMenu(); }}>
                     Orders
                   </MenuItem></>
                 ) : <MenuItem onClick={() => { navigate("/sign-in"); handleCloseUserMenu() }}>Sign In</MenuItem>
               }
-              <MenuItem onClick={() => { navigate("/my-cart"); handleCloseUserMenu(); }}>
-                My Cart
-              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>

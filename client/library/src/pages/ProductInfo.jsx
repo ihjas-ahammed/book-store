@@ -1,11 +1,38 @@
 import { Box, Button, Card, Paper, Rating, Stack, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
+import Cookies from 'js-cookie'
+import axios from 'axios'
+
 
 const ProductInfo = () => {
     
     const location = useLocation()
     const {productData} = location.state
+    const navigate = useNavigate()
+    
+    const user = Cookies.get("User")
+    const User = user != null ? JSON.parse(user) : null
+    
+
+    const onAddCart = () =>{
+        if(User == null) navigate('/sign-in')
+        const username = User.username
+        addCartItem(username,productData)
+    }
+
+    const addCartItem = (username,item) => {
+        axios
+          .post(`http://localhost:3001/cart/add`, { username, item })
+          .then((res) => {
+            navigate("/my-cart")
+            window.location.href = "/my-cart"
+          })
+          .catch((error) => {
+            console.error('Error adding cart item:', error);
+          });
+      };
+
     return (
     <Paper className='h-[95vh] flex'>
         <Card elevation={4} className='max-w-300 mx-auto my-auto'>
@@ -19,7 +46,7 @@ const ProductInfo = () => {
                         <Typography variant='h6' className='text-blue-600'>{productData.author}</Typography>
                         <Rating name="half-rating-read" defaultValue={parseInt(productData.rating)} precision={0.5} readOnly />
                         <Typography sx={{fontSize:20}}>$ {productData.price}</Typography>
-                        <Button color='primary' sx={{mt:'auto'}}>Add to my cart</Button>
+                        <Button color='primary' onClick={onAddCart} sx={{mt:'auto'}}>Add to my cart</Button>
                     </Stack>
                 </Box>
                 <Stack>

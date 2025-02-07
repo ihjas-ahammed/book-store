@@ -2,7 +2,7 @@ import { Close, Delete } from '@mui/icons-material'
 import { Box, Button, Card, Stack, Typography } from '@mui/material'
 import React from 'react'
 
-const CartItem = ({ image, name, author, price, count, onChangeCount }) => {
+const CartItem = ({ image, name, author, price, count, onChangeCount, onDelete }) => {
     return (
         <Card className='flex p-4 gap-4 min-h-55' >
             <img className='w-30 h-fit' src={image}></img>
@@ -14,7 +14,7 @@ const CartItem = ({ image, name, author, price, count, onChangeCount }) => {
                     <Button onClick={() => onChangeCount(-1)}>-</Button>
                     <Typography sx={{ px: 2 }}>{count}</Typography>
                     <Button onClick={() => onChangeCount(1)}>+</Button>
-                    <Button sx={{ ml: 'auto' }} >
+                    <Button sx={{ ml: 'auto' }} onClick={onDelete}>
                         <Delete sx={{ fontSize: 20 }} />
                     </Button>
                 </Box>
