@@ -6,10 +6,16 @@ import Cookies from 'js-cookie'
 import { useEffect } from 'react'
 import axios from 'axios'
 
+
+import { Link, useNavigate } from 'react-router'
+
+
 const MyCart = () => {
 
     const [cartItems, setCartItems] = useState([])
-
+    
+    
+    const navigate = useNavigate()
     
     const user = Cookies.get("User")
     const User = user != null ? JSON.parse(user) : null
@@ -40,6 +46,8 @@ const MyCart = () => {
             console.error('Error removing cart item:', error);
           });
       };
+
+      
     
       const updateCount = (itemName, newCount) => {
         if (newCount < 0) return
@@ -63,6 +71,22 @@ const MyCart = () => {
         let t = 0
         cartItems.map((i) => t += i.count)
         return t
+    }
+
+    const onCheckout = () =>{
+        cartItems.map(i => {
+            axios.post('http://localhost:3001/order/add', {
+                username,
+                item: i.item,
+                count: i.count,
+            }).then((r)=>{
+                console.log(r.data)
+                removeCartItem(i.item.name)
+            })
+        })
+
+        navigate('/orders')
+        window.location.href = '/orders'
     }
 
     return (
@@ -118,7 +142,7 @@ const MyCart = () => {
                                 <TableCell>₹ {parseInt(getCartTotal()) + parseInt(getCartTotal() * 0.18)}</TableCell>
                             </TableRow>
                         </Table>
-                        <Button sx={{ mt: 'auto' }} className='w-[100%]'>Check Out</Button>
+                        <Button sx={{ mt: 'auto' }} className='w-[100%]' onClick={onCheckout}>Check Out</Button>
                     </Stack>
                 </Stack>
             </Card>

@@ -1,25 +1,51 @@
 import { Box, Button, Card, Paper, Stack, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import OrderCard from '../components/OrderCard'
+import axios from 'axios'
+import Cookies from 'js-cookie'
+
+import { Link, useNavigate } from 'react-router'
+
 
 const Orders = () => {
 
-    const [orders, setOrders] = useState([
-        {
-            item: {
-                "id": 4,
-                "image": "https://books.google.com/books/publisher/content/images/frontcover/hqFSEAAAQBAJ?fife=w256-h256",
-                "name": "The Good Life: Lessons from the World's Longest Study on Happiness",
-                "rating": "4.0",
-                "price": "424.21",
-                "priceOld": "732.78",
-                "description": "Drawing from the Harvard Study of Adult Development, 'The Good Life' reveals insights into what truly makes life fulfilling, emphasizing the importance of relationships, community, and personal growth.",
-                "author": "Robert Waldinger and Marc Schulz"
-            },
-            price: 424.21,
-            status: "Requested"
-        }
-    ])
+    const [orders, setOrders] = useState([])
+    
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const user = Cookies.get("User")
+        const User = user != null ? JSON.parse(user) : null
+        if (User == null) navigate('/sign-in')
+        const username = User.username
+
+        axios
+          .get(`http://localhost:3001/order/${username}`)
+          .then((res) => {
+            setOrders(res.data.orders);
+          })
+          .catch((error) => {
+            console.error('Error fetching orders:', error);
+          });
+    }, [])
+
+    const cancelOrder = (itemName) => {
+        
+        const user = Cookies.get("User")
+        const User = user != null ? JSON.parse(user) : null
+        if (User == null) navigate('/sign-in')
+        const username = User.username
+        axios
+          .delete(`http://localhost:3001/order/remove`, {
+            data: { username, itemName },
+          })
+          .then((res) => {
+            setOrders(res.data.orders);
+          })
+          .catch((error) => {
+            console.error('Error removing order:', error);
+          });
+      };
 
     return (
         <Paper className='h-[95vh] flex flex-col'>
@@ -31,8 +57,9 @@ const Orders = () => {
                             <OrderCard
                                 name={i.item.name}
                                 author={i.item.author}
-                                price={i.price}
+                                price={i.item.price * i.count}
                                 status={i.status}
+                                onCancel={()=>{cancelOrder(i.item.name)}}
                             />
                         )
                     })

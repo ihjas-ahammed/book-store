@@ -31,6 +31,7 @@ const {
   } = require('./models/productOperations');
 
   const Cart = require('./models/Cart')
+  const Orders = require('./models/Orders')
 
   app.get('/', (req, res) => {
     res.send('Hello')
@@ -357,6 +358,96 @@ app.post('/product/add', async (req, res) => {
     }
   });
   
+  app.post('/order/add', async (req, res) => {
+    try {
+      const { username, item, count } = req.body;
+      if (!username || !item || !item.name) {
+        return res.status(400).json({ message: 'username and item (with at least a name property) are required' });
+      }
+  
+      let orders = await Orders.findOne({ username });
+      if (!orders) {
+        orders = new Orders({ username, orders: [] });
+      }
+      const existingItemIndex = orders.orders.findIndex(order => order.item.name === item.name);
+      if (existingItemIndex !== -1) {
+        orders.orders[existingItemIndex].count += count;
+        orders.orders[existingItemIndex].status = "Requested";
+      } else {
+        orders.orders.push({ item, status: "Requested" , count});
+      }
+  
+      await orders.save();
+      res.json(orders);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+
+  app.get('/order/:username', async (req, res) => {
+    try {
+      const username = req.params.username;
+      const orders = await Orders.findOne({ username });
+      if (!orders) {
+        return res.status(404).json({ message: 'Orders not found' });
+      }
+      res.json(orders);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.delete('/order/remove', async (req, res) => {
+    try {
+      const { username, itemName } = req.body;
+      if (!username || !itemName) {
+        return res.status(400).json({ message: 'username and itemName are required' });
+      }
+  
+      let orders = await Orders.findOne({ username });
+      if (!orders) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+  
+      orders.orders = orders.orders.filter(order => order.item.name !== itemName);
+  
+      await orders.save();
+      res.json(orders);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.put('/order/update', async (req, res) => {
+    try {
+      const { username, itemName, status } = req.body;
+      if (!username || !itemName || !status) {
+        return res.status(400).json({ message: 'username, itemName, and status are required' });
+      }
+  
+      let orders = await Orders.findOne({ username });
+      if (!orders) {
+        orders = new Orders({ username, cartItems: [] });
+      }
+  
+      const index = orders.orders.findIndex(order => order.item.name === itemName);
+      if (index === -1) {
+        return res.status(404).json({ message: 'Item not found in orders' });
+      }
+  
+      orders.orders[index].status = status;
+  
+      await orders.save();
+      res.json(orders);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 
 app.listen(port, () => {
     console.log(`Backend server started at ${port} `)

@@ -1,6 +1,6 @@
 import { Button, Card, Stack, TextField, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
@@ -8,6 +8,7 @@ const SignUp = () => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const navigate = useNavigate()
 
     const handleSignUp = async (e) => {
         e.preventDefault()
@@ -18,10 +19,9 @@ const SignUp = () => {
                 email,
                 password,
             })
-            Cookies.set('User', JSON.stringify(response.data), { expires: 100, path: "/" })
 
-            navigate("/", { state: { user: response.data } })
-            window.location.href = '/'
+            navigate("/sign-in")
+            window.location.href = '/sign-in'
         } catch (error) {
             console.error('Error creating user:', error)
         }
