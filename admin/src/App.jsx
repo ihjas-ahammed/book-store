@@ -4,8 +4,8 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import NavBar from './components/NavBar'
 import { Route, Routes } from 'react-router'
-import Products from './Products'
-import Users from './Users'
+import ProductsAdmin from './ProductsAdmin'
+import UserAdmin from './UserAdmin'
 
 function App() {
 
@@ -13,8 +13,8 @@ function App() {
     <>
       <NavBar/>
       <Routes>
-        <Route path='/' element={<Products/>}/>
-        <Route path='/users' element={<Users/>}/>
+        <Route path='/' element={<ProductsAdmin/>}/>
+        <Route path='/users' element={<UserAdmin/>}/>
       </Routes>
     </>
   )

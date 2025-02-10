@@ -132,7 +132,7 @@ app.delete('/user/remove', async (req, res) => {
 });
 
 
-app.get('/users', async (req, res) => {
+app.post('/users', async (req, res) => {
     const { adminPass } = req.body;
     if (!adminPass) {
         return res.status(400).json({ message: 'adminPass required' });

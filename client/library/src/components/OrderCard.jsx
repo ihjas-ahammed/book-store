@@ -16,7 +16,7 @@ const OrderCard = ({name,author,price,status,onCancel}) => {
                         <Typography>{status}</Typography>
                     </Stack>
                 </Box>
-                <Button color='error' onClick={onCancel}>Cancel Order</Button>
+                { status == "Delivered" ? <Typography></Typography> : <Button color='error' onClick={onCancel}>Close Order</Button>}
             </Stack>
         </Card>
     )
